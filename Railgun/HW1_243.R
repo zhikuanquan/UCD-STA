@@ -78,6 +78,17 @@ plot(lams, prods, "b")
 
 ###  Sketched-OLS  ###
 library(pracma)
+generate_canonical = function(i_th,size){
+  c = rep(0,size)
+  if (0 < i_th && i_th <= size){
+    c[i_th] = 1
+    return(c)
+  }
+  else{
+    return(NA)
+  }
+}
+
 # 1. Algorithms 
 sketched_OLS = function(X, y, error){
   # Preparation for X and y by resampling methods
@@ -101,9 +112,10 @@ sketched_OLS = function(X, y, error){
     rD = fhm(generate_canonical(sampleS[i],rN) * sqrt(rN / r)) * sampleD
     diaX[i,] = rD %*% resamplingX
     diaY[i,] = rD %*% resamplingY
+    print(i/r)
   }
   
-  #
+  # beta
   beta = solve(t(diaX) %*% diaX) %*% t(diaX) %*% diaY
   
   # Get the result
@@ -115,8 +127,8 @@ sketched_OLS = function(X, y, error){
 }
 
 # 2. Test
-DesignMatrix = rand(2048,20)
-Y = rand(2048,1)
+DesignMatrix = rand(2^22,20)
+Y = rand(2^22,1)
 error = 0.1
 testResult = sketched_OLS(DesignMatrix,Y,error)
 
