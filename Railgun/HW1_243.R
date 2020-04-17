@@ -93,22 +93,17 @@ sketched_OLS = function(X, y, error){
   # r
   r = round(d * log(rN) / error)
   
-  print("Building rd Matrix")
-  rDMatrix = zeros(r,rN)
+  diaX = zeros(r,d)
+  diaY = zeros(r,1)
   sampleS = sample(c(1:rN),size = r,replace = T,prob = rep(1/rN,rN))
   sampleD = sample(c(1,-1),size = rN,replace = T,prob = c(0.5,0.5))
   for (i in 1:r){
-    rDMatrix[i,] = fhm(generate_canonical(sampleS[i],rN) * sqrt(rN / r)) 
-  }
-  for (j in 1:rN){
-    if (sampleD[j] == -1){
-      rDMatrix[,j] = rDMatrix[,j] * -1
-    }
+    rD = fhm(generate_canonical(sampleS[i],rN) * sqrt(rN / r)) * sampleD
+    diaX[i,] = rD %*% resamplingX
+    diaY[i,] = rD %*% resamplingY
   }
   
   #
-  diaX = rDMatrix %*% resamplingX
-  diaY = rDMatrix %*% resamplingY
   beta = solve(t(diaX) %*% diaX) %*% t(diaX) %*% diaY
   
   # Get the result
