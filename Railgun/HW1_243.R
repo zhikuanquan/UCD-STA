@@ -77,7 +77,9 @@ plot(lams, prods, "b")
 
 
 ###  Sketched-OLS  ###
-library(pracma)
+library("pracma")
+library("phangorn")
+library("Matrix")
 generate_canonical = function(i_th,size){
   c = rep(0,size)
   if (0 < i_th && i_th <= size){
