@@ -104,6 +104,7 @@ sketched_OLS = function(X, y, error){
   # r
   r = round(d * log(rN) / error)
   
+  # S^T H D
   diaX = zeros(r,d)
   diaY = zeros(r,1)
   sampleS = sample(c(1:rN),size = r,replace = T,prob = rep(1/rN,rN))
@@ -131,13 +132,13 @@ DesignMatrix = rand(1048576,20)
 Y = rand(1048576,1)
 
 # 3. Time
-error = 0.1
-testResult = sketched_OLS(DesignMatrix,Y,error)
+error = c(0.1, 0.05, 0.01, 0.001)
+timeStar <- list()
+for(kk in 4){
+  testResult = sketched_OLS(DesignMatrix,Y,error[kk])
+  Xstar = testResult$diaX
+  Ystar = testResult$diaY
+  timeStar[[kk]] = system.time(solve(t(Xstar) %*% Xstar) %*% t(Xstar) %*% Ystar)
+}
 
-Xstar = testResult$diaX
-Ystar = testResult$diaY
-
-timeStar = system.time(solve(t(Xstar) %*% Xstar) %*% t(Xstar) %*% Ystar)
-timeStar
 timeOri = system.time(solve(t(DesignMatrix) %*% DesignMatrix) %*% t(DesignMatrix) %*% Y)
-timeOri
