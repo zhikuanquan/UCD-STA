@@ -80,6 +80,7 @@ plot(lams, prods, "b")
 library("pracma")
 library("phangorn")
 library("Matrix")
+library(microbenchmark)
 generate_canonical = function(i_th,size){
   c = rep(0,size)
   if (0 < i_th && i_th <= size){
@@ -98,9 +99,17 @@ sketched_OLS = function(X, y, error){
   y = as.matrix(y)
   n = dim(X)[1]
   rN = 2^floor(log2(n))
-  Reduce = sample(n,size = rN,replace = F)
-  resamplingX = X[Reduce,]
-  resamplingY = y[Reduce,]
+  
+  if ((log2(n) - floor(log2(n))) == 0){
+    resamplingX = X
+    resamplingY = y
+  }
+  else{
+    Reduce = sample(n,size = rN,replace = F)
+    resamplingX = X[Reduce,]
+    resamplingY = y[Reduce,]
+  }
+  
   d = dim(X)[2]
   
   # r
@@ -115,7 +124,11 @@ sketched_OLS = function(X, y, error){
     rD = fhm(generate_canonical(sampleS[i],rN) * sqrt(rN / r)) * sampleD
     diaX[i,] = rD %*% resamplingX
     diaY[i,] = rD %*% resamplingY
-    print(i/r)
+    
+    if ((i %% 500) == 0){
+      print(i/r)
+    }
+    
   }
   
   # beta
@@ -136,11 +149,18 @@ Y = rand(1048576,1)
 # 3. Time
 error = c(0.1, 0.05, 0.01, 0.001)
 timeStar <- list()
-for(kk in 4){
+timeMicro = list()
+for(kk in 1:3){
   testResult = sketched_OLS(DesignMatrix,Y,error[kk])
   Xstar = testResult$diaX
   Ystar = testResult$diaY
   timeStar[[kk]] = system.time(solve(t(Xstar) %*% Xstar) %*% t(Xstar) %*% Ystar)
+  timeMicro[[kk]] = microbenchmark(solve(t(Xstar) %*% Xstar) %*% t(Xstar) %*% Ystar)
+  print(timeStar)
+  print("#############")
+  print(timeMicro)
 }
 
 timeOri = system.time(solve(t(DesignMatrix) %*% DesignMatrix) %*% t(DesignMatrix) %*% Y)
+timeOriMicro = microbenchmark(solve(t(DesignMatrix) %*% DesignMatrix) %*% t(DesignMatrix) %*% Y)
+
