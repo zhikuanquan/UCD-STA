@@ -98,7 +98,7 @@ sketched_OLS = function(X, y, error){
   y = as.matrix(y)
   n = dim(X)[1]
   rN = 2^floor(log2(n))
-  Reduce = sample(n,size = rN,replace = T)
+  Reduce = sample(n,size = rN,replace = F)
   resamplingX = X[Reduce,]
   resamplingY = y[Reduce,]
   d = dim(X)[2]
