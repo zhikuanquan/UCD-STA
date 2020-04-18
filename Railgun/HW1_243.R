@@ -127,9 +127,8 @@ sketched_OLS = function(X, y, error){
 }
 
 # 2. Test
-DesignMatrix = rand(2^22,20)
-Y = rand(2^22,1)
-
+DesignMatrix = rand(1048576,20)
+Y = rand(1048576,1)
 
 # 3. Time
 error = 0.1
