@@ -129,8 +129,16 @@ sketched_OLS = function(X, y, error){
 # 2. Test
 DesignMatrix = rand(2^22,20)
 Y = rand(2^22,1)
+
+
+# 3. Time
 error = 0.1
 testResult = sketched_OLS(DesignMatrix,Y,error)
 
+Xstar = testResult$diaX
+Ystar = testResult$diaY
 
-
+timeStar = system.time(solve(t(Xstar) %*% Xstar) %*% t(Xstar) %*% Ystar)
+timeStar
+timeOri = system.time(solve(t(DesignMatrix) %*% DesignMatrix) %*% t(DesignMatrix) %*% Y)
+timeOri
