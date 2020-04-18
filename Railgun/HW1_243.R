@@ -150,7 +150,7 @@ Y = rand(1048576,1)
 error = c(0.1, 0.05, 0.01, 0.001)
 timeStar <- list()
 timeMicro = list()
-for(kk in 1:3){
+for(kk in 1:4){
   testResult = sketched_OLS(DesignMatrix,Y,error[kk])
   Xstar = testResult$diaX
   Ystar = testResult$diaY
