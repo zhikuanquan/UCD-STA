@@ -48,16 +48,29 @@ image(z = Approx200,main = "Estimates of r = 200")
 
 
 ### Power MEthod ###
+calculate_distence = function(v1,v2){
+  return(norm(as.matrix(v1-v2),c("2")))
+}
+### A is the matrix
+### v0 is the initial vector
+### eps contral the condition when will jump out the loop if it dose not reach the maxiter, if the distence between two vectors is smaller than eps, it will end for loop.
+### maxiter the max iterations which this function will reach.
 power_iteration = function(A, v0, eps = 1e-6, maxiter=100) {
   # Please implement the function power_iteration that takes 
   # in the matrix X and initial vector v0 and returns the eigenvector.
-  v = v0
+  pre = v0
   for (i in 1:maxiter){
-    c_t = A %*% v
-    c_t = c_t / (norm(as.matrix(c_t),c("2")) + eps)
-    v = c_t
+    cur = A %*% pre
+    cur = cur / (norm(as.matrix(cur),c("2")))
+    dis = calculate_distence(pre,cur)
+    if (dis <= eps){
+      break()
+    }
+    else{
+      pre = cur
+    }
   }
-  return(c_t)
+  return(cur)
 }
 
 set.seed(5)
